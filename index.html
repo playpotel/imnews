@@ -1,93 +1,86 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="bg">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Global RSS News</title>
+    <title>БЪЛГАРИЯ 24/7 | Актуални Новини</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-zinc-50 text-zinc-900">
+<body class="bg-gray-100 text-gray-900">
 
-    <nav class="bg-white border-b border-zinc-200 p-4 sticky top-0 z-50">
-        <div class="container mx-auto flex justify-between items-center">
-            <h1 class="text-xl font-black tracking-tighter uppercase text-red-600">RSS<span class="text-zinc-800">Global</span></h1>
-            <select id="feedSelect" class="border rounded-md px-3 py-1 text-sm bg-zinc-100 outline-none focus:ring-2 focus:ring-red-500">
-                <option value="https://www.antaranews.com/rss/terpopuler.xml">Indonesia (Antara News)</option>
-                <option value="http://feeds.bbci.co.uk/news/world/rss.xml">Global (BBC News)</option>
-                <option value="https://www.lemonde.fr/rss/une.xml">Prancis (Le Monde)</option>
-                <option value="https://www.aljazeera.com/xml/rss/all.xml">Timur Tengah (Al Jazeera)</option>
-                <option value="https://www.nytimes.com/svc/collections/v1/publish/https://www.nytimes.com/section/world/rss.xml">Amerika (NY Times)</option>
-            </select>
+    <nav class="bg-white border-b-4 border-red-600 shadow-sm sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+            <h1 class="text-3xl font-black tracking-tighter text-blue-800">БЪЛГАРИЯ <span class="text-red-600">24/7</span></h1>
+            <div class="hidden md:flex space-x-6 font-bold uppercase text-sm">
+                <a href="#" class="hover:text-red-600">Начало</a>
+                <a href="#" class="hover:text-red-600">Политика</a>
+                <a href="#" class="hover:text-red-600">Бизнес</a>
+                <a href="#" class="hover:text-red-600">Технологии</a>
+                <a href="#" class="hover:text-red-600">Спорт</a>
+            </div>
         </div>
     </nav>
 
-    <main class="container mx-auto px-4 py-8">
-        <div id="loading" class="text-center py-20 hidden">
-            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600 mx-auto"></div>
-            <p class="mt-4 text-zinc-500">Menghubungkan ke satelit...</p>
-        </div>
+    <main class="max-w-6xl mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <div class="lg:col-span-2">
+                <div class="relative group cursor-pointer overflow-hidden rounded-lg bg-white shadow-lg">
+                    <img src="https://images.unsplash.com/photo-1555914757-0639d4850785?auto=format&fit=crop&q=80&w=800" alt="Sofia" class="w-full h-96 object-cover group-hover:scale-105 transition duration-300">
+                    <div class="p-6">
+                        <span class="bg-red-600 text-white text-xs font-bold px-2 py-1 rounded">ГОРЕЩА НОВИНА</span>
+                        <h2 class="text-3xl font-bold mt-2 leading-tight">София домакин на голям икономически форум за бъдещето на Източна Европа</h2>
+                        <p class="text-gray-600 mt-4 text-lg">Днес в столицата започна мащабна среща на лидери и инвеститори, обсъждащи пълното интегриране на еврото в българската икономика...</p>
+                        <p class="text-sm text-gray-400 mt-4 italic">Публикувано: 3 февруари 2026</p>
+                    </div>
+                </div>
 
-        <div id="newsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+                    <div class="bg-white rounded shadow p-4">
+                        <h3 class="font-bold text-xl mb-2">Нови технологии в Пловдив</h3>
+                        <p class="text-gray-600 text-sm">Откриха нов център за разработка на изкуствен интелект...</p>
+                    </div>
+                    <div class="bg-white rounded shadow p-4">
+                        <h3 class="font-bold text-xl mb-2">Туризмът през 2026</h3>
+                        <p class="text-gray-600 text-sm">Зимните курорти Банско и Боровец отчитат рекорден брой туристи...</p>
+                    </div>
+                </div>
             </div>
+
+            <aside class="space-y-6">
+                <div class="bg-blue-800 text-white p-6 rounded-lg">
+                    <h3 class="text-xl font-bold mb-4">Времето в България</h3>
+                    <div class="flex justify-between items-center border-b border-blue-700 pb-2">
+                        <span>София</span> <span class="font-bold">2°C</span>
+                    </div>
+                    <div class="flex justify-between items-center border-b border-blue-700 py-2">
+                        <span>Пловдив</span> <span class="font-bold">5°C</span>
+                    </div>
+                    <div class="flex justify-between items-center py-2 border-b border-blue-700">
+                        <span>Варна</span> <span class="font-bold">7°C</span>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h3 class="font-bold text-lg mb-4 border-l-4 border-red-600 pl-2">Валутен курс</h3>
+                    <p class="text-2xl font-mono">1 EUR = 1.95583 BGN</p>
+                    <p class="text-xs text-gray-500 mt-2">*Фиксиран курс за преход към еврото.</p>
+                </div>
+            </aside>
+
+        </div>
     </main>
 
-    <script>
-        const feedSelect = document.getElementById('feedSelect');
-        const newsGrid = document.getElementById('newsGrid');
-        const loading = document.getElementById('loading');
+    <footer class="bg-gray-800 text-gray-400 py-10 mt-12">
+        <div class="max-w-6xl mx-auto px-4 text-center text-sm">
+            <p>&copy; 2026 БЪЛГАРИЯ 24/7 - Новини от България и Света.</p>
+            <div class="mt-4 space-x-4">
+                <a href="#" class="hover:text-white">За нас</a>
+                <a href="#" class="hover:text-white">Контакти</a>
+                <a href="#" class="hover:text-white">Реклама</a>
+            </div>
+        </div>
+    </footer>
 
-        // Menggunakan RSS2JSON API (Gratis & Tanpa Key untuk penggunaan ringan)
-        async function fetchRSS(rssUrl) {
-            loading.classList.remove('hidden');
-            newsGrid.innerHTML = '';
-            
-            const proxyUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
-
-            try {
-                const response = await fetch(proxyUrl);
-                const data = await response.json();
-
-                if (data.status === 'ok') {
-                    displayNews(data.items);
-                } else {
-                    newsGrid.innerHTML = `<p class="text-center col-span-full">Gagal mengambil data dari feed ini.</p>`;
-                }
-            } catch (error) {
-                console.error("Fetch error:", error);
-                newsGrid.innerHTML = `<p class="text-center col-span-full">Terjadi kesalahan koneksi.</p>`;
-            } finally {
-                loading.classList.add('hidden');
-            }
-        }
-
-        function displayNews(items) {
-            items.forEach(item => {
-                // Mencari gambar di dalam deskripsi atau thumbnail
-                const imgSrc = item.thumbnail || item.enclosure.link || 'https://via.placeholder.com/400x250?text=No+Image';
-                
-                const card = `
-                    <article class="bg-white border border-zinc-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow flex flex-col">
-                        <img src="${imgSrc}" class="w-full h-48 object-cover bg-zinc-200" alt="thumbnail">
-                        <div class="p-5 flex-1 flex flex-col">
-                            <h2 class="font-bold text-lg mb-2 leading-tight">${item.title}</h2>
-                            <p class="text-zinc-500 text-xs mb-4">${new Date(item.pubDate).toLocaleDateString('id-ID', {day: 'numeric', month: 'long', year: 'numeric'})}</p>
-                            <div class="text-zinc-600 text-sm line-clamp-3 mb-6">
-                                ${item.description.replace(/<[^>]*>?/gm, '')} 
-                            </div>
-                            <a href="${item.link}" target="_blank" class="mt-auto inline-block bg-zinc-900 text-white text-center py-2 rounded text-sm font-medium hover:bg-zinc-700 transition-colors">
-                                Baca Artikel Asli
-                            </a>
-                        </div>
-                    </article>
-                `;
-                newsGrid.innerHTML += card;
-            });
-        }
-
-        feedSelect.addEventListener('change', (e) => fetchRSS(e.target.value));
-        
-        // Load default feed
-        fetchRSS(feedSelect.value);
-    </script>
 </body>
 </html>
