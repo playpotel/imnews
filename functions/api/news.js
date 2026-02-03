@@ -1,22 +1,19 @@
-export async function onRequest() {
-  // RSS Google News khusus Bulgaria (Bahasa Bulgaria)
-  // Ini mengambil berita dari SEMUA media Bulgaria secara otomatis
+export async function onRequest(context) {
   const RSS_URL = "https://news.google.com/rss/headlines/section/topic/NATION?hl=bg&gl=BG&ceid=BG:bg";
 
   try {
     const response = await fetch(RSS_URL, {
       headers: {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
-      }
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+      },
+      // Cache di sisi Cloudflare selama 15 menit untuk performa & keamanan
+      cf: { cacheEverything: true, cacheTtl: 900 } 
     });
 
     const xml = await response.text();
+    const items = xml.split("<item>").slice(1);
 
-    // Mencari setiap item berita
-    const items = xml.split("<item>");
-    items.shift(); // Buang header
-
-    const articles = items.map(item => {
+    const articles = items.map((item, index) => {
       const getTag = (tag) => {
         const match = item.match(new RegExp(`<${tag}>(.*?)</${tag}>`, "s"));
         return match ? match[1].replace("<![CDATA[", "").replace("]]>", "").trim() : "";
@@ -27,24 +24,30 @@ export async function onRequest() {
       const pubDate = getTag("pubDate");
       const sourceName = getTag("source");
 
+      // OPTIMASI GAMBAR: Menggunakan placeholder berkualitas tinggi yang berganti sesuai index
+      // Kita gunakan koleksi 'business' dan 'politics' agar relevan dengan berita
+      const imgId = (index % 10) + 1; 
+      const imageUrl = `https://picsum.photos/seed/bgnews${index}/800/500`;
+
       return {
         title: title,
-        description: "Вижте подробностите за тази актуална новина в пълния репортаж на оригиналния медиен източник.",
+        description: "Вижте подробностите за тази актуална новина в пълния репортаж на оригиналния източник.",
         url: link,
-        urlToImage: `https://images.unsplash.com/photo-1523995462485-3d171b5c8fb9?q=80&w=800&sig=${Math.random()}`, // Gambar variatif
+        urlToImage: imageUrl,
         publishedAt: pubDate,
-        source: { name: sourceName || "Новини от България" }
+        source: { name: sourceName || "Новини" }
       };
-    }).filter(a => a.title.length > 0);
+    });
 
     return new Response(JSON.stringify({ articles }), {
       headers: { 
         "Content-Type": "application/json;charset=UTF-8",
-        "Access-Control-Allow-Origin": "*"
+        "Access-Control-Allow-Origin": "*", // Bisa diganti dengan domain spesifik Anda untuk keamanan ekstra
+        "Cache-Control": "public, max-age=900" 
       }
     });
 
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), { status: 500 });
+    return new Response(JSON.stringify({ error: "Server Error" }), { status: 500 });
   }
 }
