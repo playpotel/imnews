@@ -3,85 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="page-title">Зареждане... | България24</title>
     
+    <title id="page-title">Зареждане на новина...</title>
     <meta name="description" id="meta-desc" content="">
+    
     <meta property="og:type" content="article">
     <meta property="og:title" id="og-title" content="">
     <meta property="og:image" id="og-img" content="">
+    <meta property="og:url" id="og-url" content="">
+    <meta property="og:site_name" content="България24">
 
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>body { font-family: 'Montserrat', sans-serif; }</style>
 </head>
 <body class="bg-gray-50 text-slate-900">
 
-    <header class="bg-[#1a237e] py-5 shadow-lg mb-8">
-        <div class="max-w-4xl mx-auto px-4">
+    <header class="bg-[#1a237e] py-5 shadow-lg sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 flex justify-between items-center">
             <a href="/" class="text-white font-black text-2xl italic uppercase tracking-tighter">България<span class="text-red-500">24</span></a>
+            <a href="/" class="text-white text-xs font-bold border border-white/30 px-4 py-2 rounded-full hover:bg-white hover:text-blue-900 transition uppercase">Назад</a>
         </div>
     </header>
 
-    <main class="max-w-3xl mx-auto px-4 py-6">
-        <div id="ad-top" class="w-full h-24 bg-gray-100 border-2 border-dashed border-gray-300 mb-8 flex items-center justify-center text-gray-400 text-xs font-bold uppercase tracking-widest rounded-xl">
-            Място за реклама
+    <main class="max-w-3xl mx-auto px-4 py-10">
+        <div class="w-full h-24 bg-white border-2 border-dashed border-gray-300 mb-8 flex items-center justify-center text-gray-400 text-[10px] font-bold uppercase tracking-widest rounded-xl">
+            Рекламен банер (AdSense)
         </div>
 
-        <article id="news-article" class="bg-white p-6 md:p-10 rounded-3xl shadow-sm border border-gray-100 hidden">
-            <div id="article-source" class="text-xs font-black text-red-600 uppercase mb-4 tracking-widest"></div>
-            <h1 id="article-title" class="text-3xl md:text-4xl font-black mb-8 leading-tight italic"></h1>
+        <div id="loader" class="text-center py-20 text-gray-400 font-bold uppercase animate-pulse">Търсене на информация...</div>
+
+        <article id="content-area" class="bg-white p-6 md:p-10 rounded-3xl shadow-sm border border-gray-100 hidden">
+            <div id="source-info" class="text-xs font-black text-red-600 uppercase mb-4 tracking-widest"></div>
+            <h1 id="title" class="text-3xl md:text-4xl font-black mb-8 leading-tight italic text-slate-900"></h1>
             
-            <img id="article-img" src="" class="w-full h-auto rounded-2xl mb-8 shadow-xl">
+            <img id="image" src="" class="w-full h-auto rounded-2xl mb-8 shadow-2xl transition-opacity duration-500 opacity-0">
 
             <div class="prose prose-slate max-w-none text-lg leading-relaxed text-slate-700">
-                <p id="article-desc" class="mb-6"></p>
-                <p class="mb-6 italic text-sm text-gray-500">За повече подробности по тази тема, вижте пълната информация в официалния източник чрез бутона по-долу.</p>
+                <p id="description" class="mb-6 font-medium"></p>
+                <p class="mb-6">България24 ви представя най-новите събития от страната и света. Този репортаж е част от нашата мисия за бързо и обективно информиране на обществото.</p>
+                
+                <div class="my-10 p-8 bg-slate-900 text-white rounded-3xl text-center">
+                    <p class="text-[10px] uppercase opacity-50 mb-2 font-bold tracking-widest italic">Рекламно пространство</p>
+                    <div class="text-xl font-black uppercase">Вашият Банер Тук</div>
+                </div>
+
+                <p>За пълните детайли и официалното изявление, моля посетете първоизточника чрез бутона по-долу.</p>
             </div>
 
-            <div class="mt-10 pt-8 border-t flex justify-center">
-                <a id="article-link" href="#" target="_blank" class="bg-blue-900 text-white font-black px-8 py-4 rounded-full hover:bg-red-600 transition uppercase text-xs tracking-widest shadow-lg">
-                    Към оригинала
+            <div class="mt-12 pt-8 border-t flex flex-col items-center">
+                <a id="source-link" href="#" target="_blank" class="bg-blue-900 text-white font-black px-10 py-4 rounded-full hover:bg-red-600 transition uppercase text-xs tracking-[0.2em] shadow-lg">
+                    Към Оригинала
                 </a>
             </div>
         </article>
-
-        <div id="loader" class="text-center py-20 text-gray-400 font-bold uppercase tracking-widest">Търсене на статията...</div>
     </main>
 
     <script>
         const pathParts = window.location.pathname.split('/');
         const articleId = pathParts[pathParts.length - 1];
 
-        async function loadDetail() {
-            if (!articleId) return;
+        async function fetchDetail() {
+            if (!articleId || articleId === 'article.html') return;
             try {
-                // Ambil data dari API yang terhubung ke KV
+                // Ambil data dari API News (yang sudah menyimpan ke KV)
                 const res = await fetch('/api/news');
                 const data = await res.json();
                 const article = data.articles.find(a => a.id === articleId);
 
                 if (article) {
-                    document.getElementById('loader').classList.add('hidden');
-                    document.getElementById('news-article').classList.remove('hidden');
+                    document.getElementById('loader').remove();
+                    document.getElementById('content-area').classList.remove('hidden');
 
-                    // Populate UI
-                    document.getElementById('article-title').innerText = article.title;
-                    document.getElementById('article-desc').innerText = article.description;
-                    document.getElementById('article-img').src = article.urlToImage;
-                    document.getElementById('article-link').href = article.url;
-                    document.getElementById('article-source').innerText = `${article.source.name} • ${new Date(article.publishedAt).toLocaleDateString('bg-BG')}`;
-
-                    // SEO & OG Update
-                    document.title = article.title + " | България24";
-                    document.getElementById('meta-desc').content = article.description;
-                    document.getElementById('og-title').content = article.title;
-                    document.getElementById('og-img').content = article.urlToImage;
+                    document.getElementById('title').innerText = article.title;
+                    document.getElementById('description').innerText = article.description;
+                    document.getElementById('source-info').innerText = `${article.source.name} • ${new Date(article.publishedAt).toLocaleDateString('bg-BG')}`;
+                    document.getElementById('source-link').href = article.url;
+                    
+                    const img = document.getElementById('image');
+                    img.src = article.urlToImage;
+                    img.onload = () => img.classList.replace('opacity-0', 'opacity-100');
                 } else {
-                    document.getElementById('loader').innerText = "404 - Статията не е намерена";
+                    document.getElementById('loader').innerHTML = "<div class='text-red-500'>Статията не е намереna!</div>";
                 }
             } catch (e) {
-                document.getElementById('loader').innerText = "Грешка при зареждането.";
+                document.getElementById('loader').innerText = "Грешка при зареждане.";
             }
         }
-        loadDetail();
+        fetchDetail();
     </script>
 </body>
 </html>
