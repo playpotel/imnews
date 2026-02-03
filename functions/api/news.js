@@ -1,45 +1,46 @@
 export async function onRequest() {
-  // Sumber RSS Novinite - Sangat stabil dan terbuka
-  const RSS_URL = "https://www.novinite.com/rss.php";
+  // Menggunakan News.bg - Salah satu RSS paling stabil di Bulgaria
+  const RSS_URL = "https://news.bg/rss";
 
   try {
     const response = await fetch(RSS_URL, {
       headers: {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-        "Accept": "application/xml"
       }
     });
 
     const xmlString = await response.text();
 
-    // Regex sederhana untuk mengambil data dari XML (karena Cloudflare tidak punya DOMParser bawaan)
-    const items = xmlString.split('<item>').slice(1); // Potong bagian atas, ambil per item
+    // Memisahkan berdasarkan tag <item>
+    const items = xmlString.split('<item>');
+    items.shift(); // Buang bagian sebelum item pertama
 
     const articles = items.map(item => {
-      const title = item.match(/<title><!\[CDATA\[(.*?)\]\]><\/title>/)?.[1] || 
-                    item.match(/<title>(.*?)<\/title>/)?.[1] || "";
+      // Fungsi pembantu untuk mengekstrak teks di antara tag
+      const extract = (tag) => {
+        const match = item.match(new RegExp(`<${tag}>(?:<!\\[CDATA\\[)?(.*?)(?:\\]\\]>)?<\\/${tag}>`, 's'));
+        return match ? match[1].trim() : '';
+      };
+
+      const title = extract('title');
+      const link = extract('link');
+      const pubDate = extract('pubDate');
+      let description = extract('description');
       
-      const link = item.match(/<link>(.*?)<\/link>/)?.[1] || "";
-      
-      const pubDate = item.match(/<pubDate>(.*?)<\/pubDate>/)?.[1] || "";
-      
-      let description = item.match(/<description><!\[CDATA\[(.*?)\]\]><\/description>/)?.[1] || 
-                        item.match(/<description>(.*?)<\/description>/)?.[1] || "";
-      
-      // Bersihkan deskripsi dari HTML dan karakter aneh
-      description = description.replace(/<[^>]*>?/gm, '').replace(/&nbsp;/g, ' ').trim();
+      // Bersihkan HTML dari deskripsi
+      description = description.replace(/<[^>]*>?/gm, '').replace(/&nbsp;/g, ' ');
 
       return {
         title: title,
         description: description.substring(0, 150) + "...",
         url: link,
-        urlToImage: "https://images.unsplash.com/photo-1523995462485-3d171b5c8fb9?q=80&w=500", // Placeholder stabil
+        urlToImage: "https://images.unsplash.com/photo-1585829365234-781fcd04c838?q=80&w=500", // Placeholder
         publishedAt: pubDate,
-        source: { name: "Novinite.bg" }
+        source: { name: "News.bg" }
       };
-    });
+    }).filter(a => a.title !== ""); // Pastikan tidak ada item kosong
 
-    if (articles.length === 0) throw new Error("Format XML tidak dikenali");
+    if (articles.length === 0) throw new Error("Tidak ada artikel yang terurai");
 
     return new Response(JSON.stringify({ articles }), {
       headers: { 
