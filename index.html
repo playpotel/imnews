@@ -3,71 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>НОВИНИ ОТ БЪЛГАРИЯ</title>
+    <title>България Новини | Актуална Информация</title>
+    
+    <meta name="description" content="Най-важните новини от България и света в реално време. Бъдете информирани 24/7.">
+    <meta name="keywords" content="новини, българия, днес, актуално, politika, sport">
+    <meta property="og:title" content="България Новини | Актуална Информация">
+    <meta property="og:description" content="Вашият надежден източник за новини от България.">
+    <meta property="og:type" content="website">
+    
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Roboto:wght@400;700&display=swap');
-        body { font-family: 'Roboto', sans-serif; }
-        .logo-font { font-family: 'Oswald', sans-serif; }
+        body { font-family: 'Montserrat', sans-serif; }
+        .article-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .article-card:hover { transform: translateY(-5px); }
         .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .gradient-brand { background: linear-gradient(135deg, #1a237e 0%, #0d47a1 100%); }
     </style>
 </head>
-<body class="bg-slate-50">
+<body class="bg-gray-100 text-slate-900">
 
-    <header class="bg-[#1a237e] text-white py-6 shadow-2xl border-b-4 border-red-600">
-        <div class="max-w-6xl mx-auto px-4 flex justify-between items-center">
-            <h1 class="text-3xl logo-font tracking-tighter uppercase italic">България<span class="text-red-500">24</span></h1>
-            <p id="current-date" class="text-xs font-bold opacity-70"></p>
+    <header class="gradient-brand text-white shadow-2xl sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <a href="/" class="text-3xl font-black tracking-tighter uppercase italic flex items-center">
+                България<span class="text-red-500">24</span>
+            </a>
+            <div id="date-display" class="text-xs font-bold bg-white/10 px-4 py-2 rounded-full uppercase tracking-widest"></div>
         </div>
     </header>
 
-    <main class="max-w-6xl mx-auto px-4 py-10">
+    <div class="max-w-7xl mx-auto px-4 mt-6">
+        <div class="w-full h-24 bg-white border border-dashed border-gray-300 rounded-lg flex items-center justify-center text-gray-400 text-xs font-bold uppercase tracking-widest">
+            Място за реклама (Banner Ads)
+        </div>
+    </div>
+
+    <main class="max-w-7xl mx-auto px-4 py-10">
         <div id="news-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div class="col-span-full text-center py-20">
-                <div class="animate-bounce text-4xl mb-4">🇧🇬</div>
-                <p class="font-bold text-slate-400">ЗАРЕЖДАНЕ НА НОВИНИ...</p>
+            <div class="col-span-full text-center py-32">
+                <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-blue-900 border-t-transparent"></div>
+                <p class="mt-4 font-black text-blue-900 tracking-widest uppercase text-sm">Обновяване на емисията...</p>
             </div>
         </div>
     </main>
 
-    <script>
-        document.getElementById('current-date').innerText = new Date().toLocaleDateString('bg-BG', { day: 'numeric', month: 'long', year: 'numeric' });
+    <footer class="bg-slate-900 text-white py-12 mt-20 border-t-4 border-red-600">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <h2 class="text-2xl font-black mb-4 uppercase italic">България<span class="text-red-500">24</span></h2>
+            <p class="text-slate-400 text-sm max-w-md mx-auto mb-8">Най-бързото доставяне на новини от доверени източници директно към вас.</p>
+            <div class="flex justify-center gap-6 text-xs font-bold text-slate-500 uppercase tracking-widest">
+                <a href="#" class="hover:text-white transition">За нас</a>
+                <a href="#" class="hover:text-white transition">Политика за поверителност</a>
+                <a href="#" class="hover:text-white transition">Контакти</a>
+            </div>
+        </div>
+    </footer>
 
-        async function loadNews() {
+    <script>
+        // Set Bulgarian Locale Date
+        document.getElementById('date-display').innerText = new Date().toLocaleDateString('bg-BG', { 
+            weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' 
+        });
+
+        async function getNews() {
             const grid = document.getElementById('news-grid');
             try {
-                const res = await fetch('/api/news');
-                const data = await res.json();
+                const response = await fetch('/api/news');
+                const data = await response.json();
 
-                if (!data.articles || data.articles.length === 0) throw new Error();
+                if (!data.articles || data.articles.length === 0) throw new Error('No articles found');
 
-                grid.innerHTML = data.articles.map(article => `
-                    <div class="bg-white rounded-lg shadow-md overflow-hidden hover:scale-[1.02] transition-transform duration-300 flex flex-col">
-                        <div class="relative h-52 bg-slate-200">
-                            <img src="${article.urlToImage}" 
-                                 class="w-full h-full object-cover" 
-                                 onerror="this.src='https://images.unsplash.com/photo-1555914757-0639d4850785?q=80&w=800'">
-                            <span class="absolute top-3 left-3 bg-red-600 text-white text-[10px] px-2 py-1 font-bold rounded uppercase">
-                                ${article.source.name}
-                            </span>
-                        </div>
-                        <div class="p-5 flex-grow">
-                            <h2 class="text-xl font-bold text-slate-900 leading-tight mb-3 line-clamp-2">
-                                <a href="${article.url}" target="_blank" class="hover:text-blue-700">${article.title}</a>
-                            </h2>
-                            <p class="text-slate-600 text-sm line-clamp-3">${article.description}</p>
-                        </div>
-                        <div class="px-5 py-4 bg-slate-50 border-t flex justify-between items-center">
-                            <span class="text-[10px] text-slate-400 font-bold uppercase">${new Date(article.publishedAt).toLocaleDateString('bg-BG')}</span>
-                            <a href="${article.url}" target="_blank" class="text-blue-700 font-bold text-xs hover:underline uppercase tracking-widest">Прочети</a>
-                        </div>
+                grid.innerHTML = data.articles.map(article => {
+                    // Membuat URL Parameter agar data terkirim ke article.html
+                    const params = new URLSearchParams({
+                        title: article.title,
+                        desc: article.description,
+                        img: article.urlToImage,
+                        src: article.source.name,
+                        date: article.publishedAt,
+                        url: article.url // Link asli tetap disimpan
+                    }).toString();
+
+                    const detailUrl = `/article.html?${params}`;
+
+                    return `
+                        <article class="article-card bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden flex flex-col h-full">
+                            <div class="relative h-56 bg-gray-200 overflow-hidden">
+                                <a href="${detailUrl}">
+                                    <img src="${article.urlToImage}" 
+                                         alt="News Image" 
+                                         class="w-full h-full object-cover" 
+                                         loading="lazy"
+                                         onerror="this.src='https://images.unsplash.com/photo-1555914757-0639d4850785?q=80&w=800'">
+                                </a>
+                                <div class="absolute top-4 left-4">
+                                    <span class="bg-red-600 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-tighter">
+                                        ${article.source.name}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="p-6 flex-grow">
+                                <h2 class="text-xl font-extrabold text-slate-900 leading-[1.2] mb-4 line-clamp-2 hover:text-blue-700 transition">
+                                    <a href="${detailUrl}">${article.title}</a>
+                                </h2>
+                                <p class="text-slate-500 text-sm leading-relaxed line-clamp-2 mb-4">
+                                    ${article.description}
+                                </p>
+                            </div>
+                            <div class="px-6 py-5 bg-gray-50 flex justify-between items-center border-t border-gray-100">
+                                <span class="text-[10px] font-bold text-slate-400 uppercase">
+                                    ${new Date(article.publishedAt).toLocaleDateString('bg-BG')}
+                                </span>
+                                <a href="${detailUrl}" class="text-blue-800 text-xs font-black uppercase tracking-widest flex items-center gap-1 hover:gap-2 transition-all">
+                                    Прочети <span>&rarr;</span>
+                                </a>
+                            </div>
+                        </article>
+                    `;
+                }).join('');
+
+            } catch (error) {
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-20 bg-white rounded-2xl shadow-inner border border-red-50">
+                        <p class="text-red-500 font-bold uppercase tracking-widest text-sm">Грешка при зареждането на емисията. Моля, опитайте по-късно.</p>
                     </div>
-                `).join('');
-            } catch (e) {
-                grid.innerHTML = `<p class="col-span-full text-center text-red-500 font-bold">Грешка при зареждането на новини.</p>`;
+                `;
             }
         }
-        loadNews();
+
+        getNews();
     </script>
 </body>
 </html>
