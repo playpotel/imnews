@@ -10,7 +10,7 @@ export async function onRequest(context) {
     const xml = await response.text();
     const items = xml.split("<item>").slice(1);
 
-    const articles = items.map((item) => {
+    const articles = items.map((item, index) => {
       const getTag = (tag) => {
         const match = item.match(new RegExp(`<${tag}>(.*?)</${tag}>`, "s"));
         return match ? match[1].replace("<![CDATA[", "").replace("]]>", "").trim() : "";
@@ -21,34 +21,24 @@ export async function onRequest(context) {
       const pubDate = getTag("pubDate");
       const sourceName = getTag("source");
 
-      // LOGIKA GAMBAR SESUAI TOPIK
-      // Mencari kata kunci di judul untuk menentukan kategori gambar
+      // LOGIKA GAMBAR CERDAS: Mencari kata kunci untuk gambar yang relevan
       const lowerTitle = title.toLowerCase();
-      let category = "bulgaria,city"; // Default
+      let searchTag = "bulgaria,landscape";
 
-      if (lowerTitle.includes("футбол") || lowerTitle.includes("спорт") || lowerTitle.includes("цска") || lowerTitle.includes("левски")) {
-        category = "sports,soccer";
-      } else if (lowerTitle.includes("политика") || lowerTitle.includes("избори") || lowerTitle.includes("парламент") || lowerTitle.includes("радев")) {
-        category = "politics,government";
-      } else if (lowerTitle.includes("бизнес") || lowerTitle.includes("икономика") || lowerTitle.includes("пари") || lowerTitle.includes("цена")) {
-        category = "business,finance";
-      } else if (lowerTitle.includes("война") || lowerTitle.includes("армия") || lowerTitle.includes("украйна")) {
-        category = "military,war";
-      } else if (lowerTitle.includes("времето") || lowerTitle.includes("дъжд") || lowerTitle.includes("сняг")) {
-        category = "weather,nature";
-      }
+      if (lowerTitle.includes("футбол") || lowerTitle.includes("спорт")) searchTag = "soccer,sports";
+      else if (lowerTitle.includes("политика") || lowerTitle.includes("избори") || lowerTitle.includes("радев")) searchTag = "parliament,politics";
+      else if (lowerTitle.includes("бизнес") || lowerTitle.includes("икономика") || lowerTitle.includes("пари")) searchTag = "finance,business";
+      else if (lowerTitle.includes("софия") || lowerTitle.includes("пловдив") || lowerTitle.includes("варна")) searchTag = "city,bulgaria";
+      else if (lowerTitle.includes("инцидент") || lowerTitle.includes("катастрофа")) searchTag = "police,emergency";
 
-      // Gunakan Unsplash Source yang lebih akurat berdasarkan kategori
-      const imageUrl = `https://images.unsplash.com/photo-1555914757-0639d4850785?q=80&w=800&auto=format&fit=crop`; // Default fallback
-      
-      // Kita buat URL dinamis berdasarkan kategori yang ditemukan
-      const dynamicImage = `https://source.unsplash.com/featured/800x500?${category}&sig=${Math.abs(title.length)}`;
+      // LoremFlickr sangat stabil untuk Cloudflare
+      const imageUrl = `https://loremflickr.com/800/500/${searchTag}?lock=${index}`;
 
       return {
-        title: title,
-        description: "Вижте подробностите за тази актуална новина в пълния репортаж.",
+        title,
+        description: "Прочетете пълния репортаж от източника за повече информация относно това събитие.",
         url: link,
-        urlToImage: dynamicImage,
+        urlToImage: imageUrl,
         publishedAt: pubDate,
         source: { name: sourceName || "Новини" }
       };
@@ -62,6 +52,6 @@ export async function onRequest(context) {
     });
 
   } catch (error) {
-    return new Response(JSON.stringify({ error: "Error" }), { status: 500 });
+    return new Response(JSON.stringify({ error: "Fetch Error" }), { status: 500 });
   }
 }
