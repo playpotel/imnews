@@ -4,78 +4,92 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <title id="seo-title">Новини от България</title>
-    <meta name="description" id="seo-desc" content="Прочетете най-новите новини от България">
+    <title id="page-title">Зареждане на новина... | България24</title>
+    <meta name="description" id="meta-desc" content="Прочетете подробности за тази актуална новина в България24.">
+    
     <meta property="og:type" content="article">
-    <meta property="og:title" id="og-title" content="Новини от България">
+    <meta property="og:title" id="og-title" content="България Новини 24">
     <meta property="og:image" id="og-img" content="">
-    <meta property="og:site_name" content="Bulgaria24">
+    <meta property="og:url" id="og-url" content="">
 
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-50 text-slate-900">
 
-    <header class="bg-[#1a237e] py-4 shadow-lg mb-8">
-        <div class="max-w-4xl mx-auto px-4">
-            <a href="/" class="text-white font-black text-2xl tracking-tighter italic uppercase">България<span class="text-red-500">24</span></a>
+    <header class="bg-[#1a237e] py-5 shadow-lg sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 flex justify-between items-center">
+            <a href="/" class="text-white font-black text-2xl italic uppercase">България<span class="text-red-500">24</span></a>
+            <a href="/" class="text-white text-xs font-bold uppercase border border-white/30 px-3 py-1 rounded hover:bg-white hover:text-blue-900 transition">Назад</a>
         </div>
     </header>
 
-    <main class="max-w-4xl mx-auto px-4 mb-12">
-        <div class="w-full h-24 bg-gray-200 mb-8 flex items-center justify-center border border-dashed border-gray-400">
-            <span class="text-gray-400 text-xs tracking-widest uppercase">Място за реклама (AdSense)</span>
+    <main class="max-w-3xl mx-auto px-4 py-10">
+        <div class="mb-8 w-full h-24 bg-gray-200 flex items-center justify-center border border-dashed border-gray-400 text-[10px] font-bold text-gray-400 uppercase">
+            Рекламен банер (Monetization)
         </div>
 
-        <article class="bg-white p-6 md:p-10 rounded-2xl shadow-sm border border-gray-100">
-            <div id="meta-info" class="text-xs font-bold text-red-600 uppercase mb-4 tracking-widest"></div>
-            <h1 id="title" class="text-3xl md:text-4xl font-black mb-6 leading-tight text-slate-900"></h1>
+        <article id="article-content" class="bg-white p-6 md:p-10 rounded-3xl shadow-sm border border-gray-100">
+            <div id="source-tag" class="text-xs font-black text-red-600 uppercase mb-4 tracking-tighter"></div>
+            <h1 id="main-title" class="text-3xl md:text-4xl font-black mb-8 leading-tight text-slate-900 italic"></h1>
             
-            <img id="image" src="" class="w-full h-auto rounded-xl mb-8 shadow-lg">
+            <img id="main-img" src="" class="w-full h-auto rounded-2xl mb-8 shadow-2xl transition-opacity duration-500 opacity-0">
 
-            <div id="content" class="text-lg leading-relaxed text-slate-700 space-y-4">
+            <div class="prose prose-slate lg:prose-lg max-w-none text-lg leading-relaxed text-slate-700">
+                <p id="desc-text" class="mb-6 font-medium"></p>
+                <p class="mb-6">Тази новина предизвика сериозен интерес в общественото пространство. Нашите екипи следят ситуацията в реално време, за да ви предоставят най-точните факти.</p>
+                
+                <div class="my-8 p-6 bg-slate-900 text-white rounded-2xl">
+                    <p class="text-xs font-bold uppercase opacity-50 mb-2 tracking-widest text-center italic">Рекламно съобщение</p>
+                    <div class="text-center font-bold">Вашата реклама тук / Contact for Ads</div>
                 </div>
 
-            <div class="my-10 p-4 bg-yellow-50 border-l-4 border-yellow-400 text-sm italic">
-                Рекламно съобщение тук.
+                <p>България24 остава ангажирана с мисията си да бъде вашият най-бърз и надежден източник на информация. Очаквайте подробности в следващите ни емисии.</p>
             </div>
 
-            <p class="mt-8 text-gray-500 italic text-sm">
-                За повече информация и детайли по тази тема, можете да посетите оригиналния източник на новината.
-            </p>
-
-            <a id="source-link" href="#" target="_blank" class="mt-6 inline-block bg-slate-900 text-white font-bold px-6 py-3 rounded-full hover:bg-red-600 transition uppercase text-sm">
-                Виж оригиналната статия
-            </a>
+            <div class="mt-12 pt-8 border-t border-gray-100 flex flex-col items-center">
+                <p class="text-sm text-gray-400 mb-6 italic text-center">Пълната версия на материала е достъпна в официалния източник:</p>
+                <a id="orig-btn" href="#" target="_blank" class="bg-slate-900 text-white font-black px-10 py-4 rounded-full hover:bg-red-600 transition-all uppercase text-sm tracking-widest shadow-lg">
+                    Към оригинала
+                </a>
+            </div>
         </article>
-
-        <div class="w-full h-64 bg-gray-200 mt-10 flex items-center justify-center border border-dashed border-gray-400">
-            <span class="text-gray-400 text-xs tracking-widest uppercase">Място за реклама (Banner)</span>
-        </div>
     </main>
 
     <script>
-        const params = new URLSearchParams(window.location.search);
-        
-        // Populasi Data
-        const title = params.get('title');
-        const desc = params.get('desc');
-        const img = params.get('img');
-        const src = params.get('src');
-        const originalUrl = params.get('url');
+        // Mengambil ID dari URL (/article/ID)
+        const pathParts = window.location.pathname.split('/');
+        const articleId = pathParts[pathParts.length - 1];
 
-        if(title) {
-            document.getElementById('title').innerText = title;
-            document.getElementById('seo-title').innerText = title + " | България24";
-            document.getElementById('og-title').content = title;
-            
-            document.getElementById('content').innerHTML = `<p>${desc}</p><p>Тази новина предизвика голям интерес в социалните мрежи и продължава да се следи от нашия екип. България24 ви предоставя най-бързия достъп до информация от доверени източници.</p>`;
-            
-            document.getElementById('image').src = img;
-            document.getElementById('og-img').content = img;
-            document.getElementById('seo-desc').content = desc;
-            document.getElementById('meta-info').innerText = `${src} • ${params.get('date')}`;
-            document.getElementById('source-link').href = originalUrl;
+        async function loadArticleDetail() {
+            try {
+                // Mengambil data dari API backend yang sudah terhubung ke KV
+                const res = await fetch(`/api/news`); // Idealnya buat endpoint per ID, tapi ini cara tercepat
+                const data = await res.json();
+                const article = data.articles.find(a => a.id === articleId);
+
+                if (article) {
+                    // Isi Konten
+                    document.getElementById('main-title').innerText = article.title;
+                    document.getElementById('desc-text').innerText = article.description;
+                    document.getElementById('source-tag').innerText = `${article.source.name} • ${new Date(article.publishedAt).toLocaleDateString('bg-BG')}`;
+                    document.getElementById('orig-btn').href = article.url;
+                    
+                    const img = document.getElementById('main-img');
+                    img.src = article.urlToImage;
+                    img.onload = () => img.classList.replace('opacity-0', 'opacity-100');
+
+                    // Update SEO & OG secara Dinamis
+                    document.title = `${article.title} | България24`;
+                    document.getElementById('og-title').content = article.title;
+                    document.getElementById('og-img').content = article.urlToImage;
+                    document.getElementById('og-url').content = window.location.href;
+                    document.getElementById('meta-desc').content = article.description;
+                }
+            } catch (e) {
+                console.error("Error loading article");
+            }
         }
+        loadArticleDetail();
     </script>
 </body>
 </html>
